@@ -3,8 +3,9 @@ import Navbar from '@/components/Navbar';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ThanhDev - Web App Nhắc Lịch Học Tự Động Bằng AI Vision',
-  description: 'Tự động quét thời khóa biểu từ ảnh bằng Gemini AI và gửi email nhắc lịch học mỗi sáng 7:00 AM.',
+  title: 'LịchHọc.Ai - Web App Nhắc Lịch Học Tự Động Bằng AI Vision',
+  description: 'Tự động quét thời khóa biểu từ ảnh bằng Gemini AI và gửi thông báo nhắc lịch học mỗi sáng 7:00 AM.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
