@@ -122,10 +122,10 @@ export default function PushNotificationToggle() {
     setTesting(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/cron?secret=thanhyeutanh204@@@&test=true');
+      const res = await fetch('/api/push/test', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setMessage('🚀 Đã gửi Push Test thành công! Hãy kiểm tra góc màn hình hoặc Trung tâm thông báo.');
+        setMessage(data.message || '🚀 Đã gửi Push Test thành công! Hãy kiểm tra góc màn hình hoặc Trung tâm thông báo.');
       } else {
         alert(data.error || 'Lỗi khi gửi thông báo test');
       }
