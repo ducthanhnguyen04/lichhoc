@@ -78,7 +78,12 @@ export function generateIcsContent(scheduleItems: ScheduleItem[], userId?: strin
       'BEGIN:VALARM',
       'TRIGGER:-PT2H', // Alarm 2 hours before class
       'ACTION:DISPLAY',
-      'DESCRIPTION:Nhắc lịch học',
+      'DESCRIPTION:Nhắc lịch học (trước 2 tiếng)',
+      'END:VALARM',
+      'BEGIN:VALARM',
+      'TRIGGER:PT0M', // Alarm at exact start time
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Đến giờ vào lớp!',
       'END:VALARM',
       'END:VEVENT',
     ].join('\r\n');
