@@ -90,6 +90,10 @@ export function generateIcsContent(scheduleItems: ScheduleItem[], userId?: strin
   });
 
   // Cancelled events for unused slots (from scheduleItems.length + 1 to MAX_SLOTS)
+  const now = new Date();
+  const defaultDtStart = formatDateToIcs(now);
+  const defaultDtEnd = formatDateToIcs(new Date(now.getTime() + 3600000));
+
   const cancelledEvents: string[] = [];
   for (let slotNumber = scheduleItems.length + 1; slotNumber <= MAX_SLOTS; slotNumber++) {
     const eventUid = `lichhoc-${userKey}-slot-${slotNumber}@lichhoc.ai`;
@@ -97,7 +101,9 @@ export function generateIcsContent(scheduleItems: ScheduleItem[], userId?: strin
       [
         'BEGIN:VEVENT',
         `UID:${eventUid}`,
-        `DTSTAMP:${formatDateToIcs(new Date())}`,
+        `DTSTAMP:${formatDateToIcs(now)}`,
+        `DTSTART:${defaultDtStart}`,
+        `DTEND:${defaultDtEnd}`,
         `STATUS:CANCELLED`,
         `SUMMARY:Môn học đã xóa`,
         'END:VEVENT',
