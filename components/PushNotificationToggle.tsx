@@ -122,12 +122,33 @@ export default function PushNotificationToggle() {
     setTesting(true);
     setMessage(null);
     try {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        if (Notification.permission !== 'granted') {
+          const perm = await Notification.requestPermission();
+          if (perm !== 'granted') {
+            alert('Bạn chưa cấp quyền thông báo trên trình duyệt. Hãy bấm vào biểu tượng 🔒 hoặc ⚙️ cạnh thanh địa chỉ URL để cho phép Thông báo.');
+            setTesting(false);
+            return;
+          }
+        }
+
+        // Try local notification test first
+        try {
+          new Notification('📚 Test Thông Báo LịchHọc.Ai', {
+            body: 'Thông báo thử nghiệm trực tiếp trên máy tính của bạn!',
+            icon: '/favicon.ico',
+          });
+        } catch (localErr) {
+          console.warn('Lỗi hiển thị local notification:', localErr);
+        }
+      }
+
       const res = await fetch('/api/push/test', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setMessage(data.message || '🚀 Đã gửi Push Test thành công! Hãy kiểm tra góc màn hình hoặc Trung tâm thông báo.');
+        setMessage(data.message || '🚀 Đã gửi Push Test thành công!');
       } else {
-        alert(data.error || 'Lỗi khi gửi thông báo test');
+        alert(data.error || 'Lỗi khi gửi thông báo test từ máy chủ');
       }
     } catch (err: any) {
       alert(err.message || 'Lỗi kết nối khi test push');
