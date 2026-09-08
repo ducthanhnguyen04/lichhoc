@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { sendScheduleReminderEmail } from '@/lib/email';
-import { ScheduleRow, ScheduleItem } from '@/types/schedule';
+import { sendWebPushNotification } from '@/lib/push';
+import { ScheduleRow, ScheduleItem, DAY_NAMES } from '@/types/schedule';
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,13 +28,12 @@ export async function GET(request: NextRequest) {
     const isTestMode = searchParams.get('test') === 'true';
 
     // 2. Determine Today's Day of Week
-    // JS getDay(): 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-    // Our DB standard: 2 = Monday, 3 = Tuesday, ..., 7 = Saturday, 8 = Sunday
     const now = new Date();
     const todayJs = now.getDay();
     const currentDayOfWeek = todayJs === 0 ? 8 : todayJs + 1;
+    const dayName = DAY_NAMES[currentDayOfWeek] || 'Hôm nay';
 
-    // 3. Query all user schedules via Supabase Admin Client (Service Role)
+    // 3. Query all user schedules via Supabase Admin Client
     const supabaseAdmin = createAdminClient();
     const { data: schedules, error: dbError } = await supabaseAdmin
       .from('schedules')
@@ -49,65 +48,90 @@ export async function GET(request: NextRequest) {
         success: true,
         message: 'Không tìm thấy dữ liệu thời khóa biểu nào trong cơ sở dữ liệu.',
         usersProcessed: 0,
-        emailsSent: 0,
+        pushNotificationsSent: 0,
       });
     }
 
-    let emailsSentCount = 0;
-    const detailsLog: Array<{ userId: string; email: string; classesCount: number; status: string }> = [];
+    let pushSentCount = 0;
+    const detailsLog: Array<{ userId: string; classesCount: number; devicesNotified: number; status: string }> = [];
 
     // 4. Process each schedule
     for (const schedule of schedules as ScheduleRow[]) {
       const scheduleItems: ScheduleItem[] = schedule.schedule_data || [];
-      
+
       // Filter classes taking place today (or all classes if test mode)
       const targetClasses = isTestMode
         ? scheduleItems
         : scheduleItems.filter((item) => Number(item.day_of_week) === currentDayOfWeek);
 
       if (targetClasses.length > 0) {
-        // Fetch user email from Supabase Auth Admin
-        const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
-          schedule.user_id
-        );
+        // Query active push subscriptions for this user
+        const { data: subscriptions, error: subError } = await supabaseAdmin
+          .from('push_subscriptions')
+          .select('*')
+          .eq('user_id', schedule.user_id);
 
-        if (userError || !userData?.user?.email) {
-          console.error(`Không tìm thấy email cho user_id ${schedule.user_id}:`, userError);
+        if (subError) {
+          console.error(`Lỗi khi tải push subscriptions cho user ${schedule.user_id}:`, subError);
           detailsLog.push({
             userId: schedule.user_id,
-            email: 'Unknown',
             classesCount: targetClasses.length,
-            status: 'Failed: Email not found',
+            devicesNotified: 0,
+            status: `Error fetching subscriptions: ${subError.message}`,
           });
           continue;
         }
 
-        const userEmail = userData.user.email;
-
-        // Send Email
-        try {
-          await sendScheduleReminderEmail({
-            toEmail: userEmail,
-            dayOfWeek: currentDayOfWeek,
-            todayClasses: targetClasses,
-          });
-
-          emailsSentCount++;
+        if (!subscriptions || subscriptions.length === 0) {
           detailsLog.push({
             userId: schedule.user_id,
-            email: userEmail,
             classesCount: targetClasses.length,
-            status: 'Success',
+            devicesNotified: 0,
+            status: 'Skipped: User has not enabled Web Push Notifications on any browser',
           });
-        } catch (emailErr: any) {
-          console.error(`Lỗi khi gửi mail cho ${userEmail}:`, emailErr);
-          detailsLog.push({
-            userId: schedule.user_id,
-            email: userEmail,
-            classesCount: targetClasses.length,
-            status: `Failed: ${emailErr.message}`,
-          });
+          continue;
         }
+
+        // Format Notification Body
+        const sortedClasses = [...targetClasses].sort((a, b) => a.start_time.localeCompare(b.start_time));
+        const firstClass = sortedClasses[0];
+        const bodyText =
+          sortedClasses.length === 1
+            ? `Ca 1: ${firstClass.subject_name} lúc ${firstClass.start_time} (Phòng ${firstClass.room || 'N/A'})`
+            : `Hôm nay bạn có ${sortedClasses.length} ca học! Ca 1: ${firstClass.subject_name} lúc ${firstClass.start_time}`;
+
+        let userDevicesSent = 0;
+
+        // Deliver Web Push to all devices of this user
+        for (const sub of subscriptions) {
+          try {
+            await sendWebPushNotification({
+              subscription: {
+                endpoint: sub.endpoint,
+                keys: sub.keys,
+              },
+              title: `📚 Lịch Học ${dayName} (${sortedClasses.length} ca học)`,
+              body: bodyText,
+              url: '/my-schedule',
+            });
+            userDevicesSent++;
+            pushSentCount++;
+          } catch (pushErr: any) {
+            console.error(`Lỗi gửi Push tới endpoint ${sub.endpoint}:`, pushErr);
+
+            // If subscription expired or invalid (410 Gone / 404), remove stale endpoint
+            if (pushErr.statusCode === 410 || pushErr.statusCode === 404) {
+              await supabaseAdmin.from('push_subscriptions').delete().eq('id', sub.id);
+            }
+          }
+        }
+
+        detailsLog.push({
+          userId: schedule.user_id,
+          classesCount: targetClasses.length,
+          devicesNotified: userDevicesSent,
+          status: userDevicesSent > 0 ? 'Success' : 'Failed to deliver to devices',
+        });
       }
     }
 
@@ -116,13 +140,13 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
       currentDayOfWeek,
       totalSchedulesProcessed: schedules.length,
-      emailsSentCount,
+      pushNotificationsSent: pushSentCount,
       details: detailsLog,
     });
   } catch (error: any) {
-    console.error('Lỗi khi thực thi Cron Job:', error);
+    console.error('Lỗi khi thực thi Push Notification Cron Job:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Lỗi hệ thống khi chạy Cron Job' },
+      { success: false, error: error.message || 'Lỗi hệ thống khi chạy Cron Job Web Push' },
       { status: 500 }
     );
   }

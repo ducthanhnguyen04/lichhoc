@@ -72,3 +72,34 @@ CREATE POLICY "Authenticated users can upload schedule images"
 CREATE POLICY "Users can delete their own schedule images"
     ON storage.objects FOR DELETE
     USING (bucket_id = 'schedule-images' AND auth.uid() = owner);
+
+-- 6. Web Push Subscriptions Table
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    endpoint TEXT NOT NULL UNIQUE,
+    keys JSONB NOT NULL,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS push_subscriptions_user_id_idx ON public.push_subscriptions(user_id);
+
+GRANT ALL ON TABLE public.push_subscriptions TO authenticated;
+GRANT ALL ON TABLE public.push_subscriptions TO service_role;
+GRANT ALL ON TABLE public.push_subscriptions TO anon;
+
+ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view their own push subscriptions"
+    ON public.push_subscriptions FOR SELECT
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own push subscriptions"
+    ON public.push_subscriptions FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own push subscriptions"
+    ON public.push_subscriptions FOR DELETE
+    USING (auth.uid() = user_id);
+

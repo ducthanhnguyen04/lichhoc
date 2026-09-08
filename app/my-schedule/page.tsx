@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { ScheduleRow, ScheduleItem, DAY_NAMES } from '@/types/schedule';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import CalendarSyncModal from '@/components/CalendarSyncModal';
+import PushNotificationToggle from '@/components/PushNotificationToggle';
 import { Calendar, Clock, MapPin, Edit3, Plus, Sparkles, AlertCircle, Loader2, BookOpen, Smartphone, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -95,7 +96,7 @@ export default function MySchedulePage() {
             Lịch Học Của Tôi
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Thời khóa biểu tự động nhắc nhở email 07:00 AM mỗi sáng.
+            Thời khóa biểu tự động nhắc nhở Web Push 07:00 AM mỗi sáng.
           </p>
         </div>
 
@@ -144,6 +145,9 @@ export default function MySchedulePage() {
           </Link>
         </div>
       </div>
+
+      {/* Web Push Notification Toggle Card */}
+      <PushNotificationToggle />
 
       {loading ? (
         <div className="py-16 text-center space-y-4">
