@@ -92,13 +92,11 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
-        // Format Notification Body
+        // Format Notification Body with full details (Subject, Time, Room)
         const sortedClasses = [...targetClasses].sort((a, b) => a.start_time.localeCompare(b.start_time));
-        const firstClass = sortedClasses[0];
-        const bodyText =
-          sortedClasses.length === 1
-            ? `Ca 1: ${firstClass.subject_name} lúc ${firstClass.start_time} (Phòng ${firstClass.room || 'N/A'})`
-            : `Hôm nay bạn có ${sortedClasses.length} ca học! Ca 1: ${firstClass.subject_name} lúc ${firstClass.start_time}`;
+        const bodyText = sortedClasses
+          .map((item, idx) => `${idx + 1}. ${item.subject_name}: ${item.start_time} - ${item.end_time} (📍 ${item.room || 'Phòng học'})`)
+          .join('\n');
 
         let userDevicesSent = 0;
 
