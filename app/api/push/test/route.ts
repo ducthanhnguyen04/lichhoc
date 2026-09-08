@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendWebPushNotification } from '@/lib/push';
+import { ScheduleItem, DAY_NAMES } from '@/types/schedule';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,8 @@ export async function POST(request: NextRequest) {
     }
 
     const supabaseAdmin = createAdminClient();
+
+    // Query User's Push Subscriptions
     const { data: subscriptions, error: subError } = await supabaseAdmin
       .from('push_subscriptions')
       .select('*')
@@ -41,6 +44,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Query User's Real Schedule Data
+    const { data: scheduleRow } = await supabaseAdmin
+      .from('schedules')
+      .select('schedule_data')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const scheduleItems: ScheduleItem[] = scheduleRow?.schedule_data || [];
+
+    const now = new Date();
+    const todayJs = now.getDay();
+    const currentDayOfWeek = todayJs === 0 ? 8 : todayJs + 1;
+    const dayName = DAY_NAMES[currentDayOfWeek] || 'Hôm nay';
+
+    const todayClasses = scheduleItems.filter((item) => Number(item.day_of_week) === currentDayOfWeek);
+    const targetClasses = todayClasses.length > 0 ? todayClasses : scheduleItems;
+
+    const sortedClasses = [...targetClasses].sort((a, b) => a.start_time.localeCompare(b.start_time));
+    const title = todayClasses.length > 0
+      ? `📚 Lịch Học ${dayName} (${sortedClasses.length} ca học)`
+      : `📚 Danh Sách Môn Học LịchHọc.Ai (${sortedClasses.length} môn)`;
+
+    const bodyText = sortedClasses.length > 0
+      ? sortedClasses
+          .map((item, idx) => `${idx + 1}. ${item.subject_name}: ${item.start_time} - ${item.end_time} (📍 ${item.room || 'Phòng học'})`)
+          .join('\n')
+      : 'Chưa tìm thấy môn học nào trong thời khóa biểu của bạn.';
+
     let sentCount = 0;
     const errors: string[] = [];
 
@@ -51,8 +82,8 @@ export async function POST(request: NextRequest) {
             endpoint: sub.endpoint,
             keys: sub.keys,
           },
-          title: '🎉 Thông Báo Web Push Thử Nghiệm',
-          body: 'Chúc mừng! Bạn đã kích hoạt thành công dịch vụ nhắc nhở LịchHọc.Ai trên trình duyệt này.',
+          title,
+          body: bodyText,
           url: '/my-schedule',
         });
         sentCount++;
@@ -75,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `🎉 Đã gửi thông báo test thành công tới ${sentCount} thiết bị của bạn!`,
+      message: `🎉 Đã gửi thông báo với đúng tên môn, giờ học & phòng học tới ${sentCount} thiết bị của bạn!`,
     });
   } catch (err: any) {
     console.error('Test Push API Error:', err);
