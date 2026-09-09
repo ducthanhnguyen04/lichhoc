@@ -19,6 +19,10 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
   const supabase = createClient();
 
   const handleFile = async (file: File) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+
     // Validate file type
     if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
       setErrorMsg('Vui lòng chỉ tải lên ảnh định dạng JPG hoặc PNG!');
@@ -121,7 +125,12 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => !loading && fileInputRef.current?.click()}
+        onClick={() => {
+          if (!loading) {
+            if (fileInputRef.current) fileInputRef.current.value = '';
+            fileInputRef.current?.click();
+          }
+        }}
         className={`glass-card p-8 text-center cursor-pointer transition-all border-2 border-dashed relative overflow-hidden group ${
           isDragging
             ? 'border-cyan-400 bg-cyan-500/10 scale-[1.01]'

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ScheduleItem, DAY_NAMES } from '@/types/schedule';
 import { Save, Plus, Trash2, CheckCircle2, AlertCircle, Loader2, Clock, BookOpen, MapPin, Calendar, Smartphone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,11 @@ interface ScheduleEditorProps {
 
 export default function ScheduleEditor({ initialItems, imageUrl, onSaveSuccess }: ScheduleEditorProps) {
   const [items, setItems] = useState<ScheduleItem[]>(initialItems);
+
+  // Sync internal state when initialItems prop changes (e.g., after re-scanning an image)
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);

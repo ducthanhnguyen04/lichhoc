@@ -53,6 +53,7 @@ export default function DashboardPage() {
       {extractedData && (
         <div className="space-y-4 pt-4 border-t border-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <ScheduleEditor
+            key={uploadedImageUrl || JSON.stringify(extractedData)}
             initialItems={extractedData}
             imageUrl={uploadedImageUrl}
           />
