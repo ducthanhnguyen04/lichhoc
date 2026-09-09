@@ -27,9 +27,21 @@ export async function GET(request: NextRequest) {
     // Check for test mode query param
     const isTestMode = searchParams.get('test') === 'true';
 
-    // 2. Determine Today's Day of Week
+    // 2. Determine Today's Day of Week in Vietnam Timezone (UTC+7)
     const now = new Date();
-    const todayJs = now.getDay();
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    }).formatToParts(now);
+
+    const year = Number(parts.find((p) => p.type === 'year')?.value);
+    const month = Number(parts.find((p) => p.type === 'month')?.value) - 1;
+    const day = Number(parts.find((p) => p.type === 'day')?.value);
+    const vietnamDate = new Date(year, month, day);
+
+    const todayJs = vietnamDate.getDay();
     const currentDayOfWeek = todayJs === 0 ? 8 : todayJs + 1;
     const dayName = DAY_NAMES[currentDayOfWeek] || 'Hôm nay';
 
