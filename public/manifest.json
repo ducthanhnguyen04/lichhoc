@@ -1,16 +1,28 @@
 {
-  "name": "LịchHọc.Ai - Nhắc Lịch Học Smart",
-  "short_name": "LịchHọc.Ai",
+  "name": "Tah - Nhắc Lịch Học Smart",
+  "short_name": "Tah",
   "description": "Tự động nhắc lịch học hàng ngày bằng AI Vision và Web Push Notification",
   "start_url": "/my-schedule",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0284c7",
+  "background_color": "#081524",
+  "theme_color": "#38bdf8",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
