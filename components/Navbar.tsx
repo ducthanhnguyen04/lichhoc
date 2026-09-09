@@ -43,8 +43,8 @@ export default function Navbar() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/20 group-hover:scale-105 transition-transform">
               <Calendar className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-white via-sky-100 to-sky-300 bg-clip-text text-transparent">
-              LịchHọc<span className="text-sky-400 font-extrabold">.AI</span>
+            <span className="text-xl font-extrabold bg-gradient-to-r from-white via-sky-100 to-sky-400 bg-clip-text text-transparent">
+              Tah
             </span>
           </Link>
 
