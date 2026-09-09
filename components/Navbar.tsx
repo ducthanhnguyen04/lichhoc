@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Calendar, LogOut, User, Sparkles, BookOpen, Layers } from 'lucide-react';
+import { LogOut, User, Sparkles, BookOpen, Layers, Heart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -15,12 +15,10 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    // Check initial user
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
 
-    // Listen to Auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -37,44 +35,47 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-800">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#190d14]/85 border-b border-pink-900/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              <Calendar className="w-5 h-5 text-white" />
+          <Link href="/" className="flex items-center space-x-3 group cute-bounce">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center shadow-lg shadow-pink-500/30 group-hover:rotate-6 transition-all text-xl">
+              🐷
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-white via-slate-200 to-cyan-400 bg-clip-text text-transparent">
-              LịchHọc<span className="text-cyan-400 font-extrabold">.AI</span>
+            <span className="text-xl font-black tracking-tight text-white flex items-center gap-1">
+              LịchHọc<span className="bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent font-extrabold">.Piggy</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30 font-semibold">
+                🌸 Út Ít
+              </span>
             </span>
           </Link>
 
           {/* Navigation Links (Desktop) */}
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center space-x-2">
             {user ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-2 ${
+                  className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 cute-bounce ${
                     pathname === '/dashboard'
-                      ? 'bg-slate-800 text-cyan-400 border border-slate-700'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                      ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40 shadow-sm shadow-pink-500/20'
+                      : 'text-rose-200/80 hover:text-white hover:bg-pink-950/40'
                   }`}
                 >
-                  <Sparkles className="w-4 h-4 text-cyan-400" />
-                  <span>Tải Lịch Học (AI)</span>
+                  <span className="text-sm">🐷</span>
+                  <span>Tải Lịch AI (Út Ít)</span>
                 </Link>
 
                 <Link
                   href="/my-schedule"
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center space-x-2 ${
+                  className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all flex items-center space-x-2 cute-bounce ${
                     pathname === '/my-schedule'
-                      ? 'bg-slate-800 text-cyan-400 border border-slate-700'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                      ? 'bg-pink-500/20 text-pink-300 border border-pink-500/40 shadow-sm shadow-pink-500/20'
+                      : 'text-rose-200/80 hover:text-white hover:bg-pink-950/40'
                   }`}
                 >
-                  <BookOpen className="w-4 h-4 text-blue-400" />
+                  <BookOpen className="w-4 h-4 text-pink-400" />
                   <span>Lịch Học Của Tôi</span>
                 </Link>
               </>
@@ -84,14 +85,14 @@ export default function Navbar() {
           {/* User Account Controls */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-3 pl-3 border-l border-slate-800">
-                <div className="flex items-center space-x-2 text-slate-300 bg-slate-800/80 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700/60">
-                  <User className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="flex items-center space-x-3 pl-3 border-l border-pink-950">
+                <div className="flex items-center space-x-2 text-rose-200 bg-[#25131e] px-3.5 py-1.5 rounded-2xl text-xs font-semibold border border-pink-500/30">
+                  <span className="text-sm">🐷</span>
                   <span className="max-w-[160px] truncate">{user.email}</span>
                 </div>
                 <button
                   onClick={handleSignOut}
-                  className="p-2 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
+                  className="p-2 rounded-xl text-rose-300/70 hover:text-pink-400 hover:bg-pink-950/60 transition-colors"
                   title="Đăng xuất"
                 >
                   <LogOut className="w-4 h-4" />
@@ -100,9 +101,9 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/login"
-                className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-md shadow-cyan-500/20 transition-all hover:scale-105"
+                className="px-5 py-2.5 rounded-2xl text-xs font-extrabold text-white bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 shadow-md shadow-pink-500/25 transition-all cute-bounce"
               >
-                Đăng nhập / Đăng ký
+                🐷 Đăng nhập / Đăng ký
               </Link>
             )}
           </div>
@@ -111,7 +112,7 @@ export default function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              className="p-2 rounded-xl text-pink-300 hover:text-white hover:bg-pink-950"
             >
               <Layers className="w-6 h-6" />
             </button>
@@ -121,32 +122,32 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-4 space-y-2">
+        <div className="md:hidden bg-[#1f0f18] border-b border-pink-900/40 px-4 pt-2 pb-4 space-y-2">
           {user ? (
             <>
-              <div className="px-3 py-2 text-xs text-slate-400 border-b border-slate-800 mb-2 truncate">
-                Đăng nhập: <span className="text-white font-medium">{user.email}</span>
+              <div className="px-3 py-2 text-xs text-pink-300 border-b border-pink-900/40 mb-2 truncate flex items-center gap-1.5">
+                <span>🐷</span> <span className="text-white font-medium">{user.email}</span>
               </div>
               <Link
                 href="/dashboard"
                 onClick={() => setIsMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800"
+                className="block px-3 py-2 rounded-xl text-sm font-semibold text-rose-200 hover:bg-pink-950/60"
               >
-                Tải Lịch Học (AI Vision)
+                🐷 Tải Lịch Học (Út Ít AI)
               </Link>
               <Link
                 href="/my-schedule"
                 onClick={() => setIsMenuOpen(false)}
-                className="block px-3 py-2 rounded-lg text-base font-medium text-slate-200 hover:bg-slate-800"
+                className="block px-3 py-2 rounded-xl text-sm font-semibold text-rose-200 hover:bg-pink-950/60"
               >
-                Lịch Học Của Tôi
+                📚 Lịch Học Của Tôi
               </Link>
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
                   handleSignOut();
                 }}
-                className="w-full text-left px-3 py-2 rounded-lg text-base font-medium text-red-400 hover:bg-slate-800 flex items-center space-x-2"
+                className="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold text-pink-400 hover:bg-pink-950/60 flex items-center space-x-2"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Đăng xuất</span>
@@ -156,9 +157,9 @@ export default function Navbar() {
             <Link
               href="/login"
               onClick={() => setIsMenuOpen(false)}
-              className="block text-center px-4 py-2.5 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-cyan-500 to-blue-600"
+              className="block text-center px-4 py-2.5 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-pink-500 to-rose-500"
             >
-              Đăng nhập / Đăng ký
+              🐷 Đăng nhập / Đăng ký
             </Link>
           )}
         </div>

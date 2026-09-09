@@ -4,16 +4,49 @@
 
 @layer base {
   body {
-    @apply bg-slate-900 text-slate-100 antialiased min-h-screen selection:bg-cyan-500 selection:text-white;
+    @apply bg-[#190d14] text-rose-100 antialiased min-h-screen selection:bg-pink-500 selection:text-white;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(255, 143, 163, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(255, 77, 109, 0.12) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(201, 24, 74, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
   }
 }
 
-/* Glassmorphism background utilities */
+/* Cute Piggy Glassmorphism Card Utility */
 .glass-card {
-  @apply bg-slate-800/80 backdrop-blur-xl border border-slate-700/60 shadow-xl rounded-2xl;
+  @apply bg-[#24121d]/85 backdrop-blur-xl border border-pink-500/25 shadow-xl shadow-pink-950/40 rounded-3xl transition-all;
 }
 
 .glass-input {
-  @apply bg-slate-900/60 border border-slate-700/80 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all rounded-xl;
+  @apply bg-[#150a11]/80 border border-pink-500/30 text-rose-100 placeholder-pink-300/40 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all rounded-2xl;
+}
+
+/* Cute bouncy hover animation */
+.cute-bounce {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.cute-bounce:hover {
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Custom Cute Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #190d14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4a1d2d;
+  border-radius: 9999px;
+  border: 2px solid #190d14;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff4d6d;
 }

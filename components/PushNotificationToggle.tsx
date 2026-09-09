@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, BellOff, Check, Loader2, Send, ShieldAlert, Sparkles } from 'lucide-react';
+import { Bell, BellOff, Loader2, Send, ShieldAlert } from 'lucide-react';
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -105,7 +105,7 @@ export default function PushNotificationToggle() {
         const data = await res.json();
         if (res.ok && data.success) {
           setIsSubscribed(true);
-          setMessage('🎉 Đã bật thông báo Web Push thành công! Bạn sẽ nhận nhắc nhở 07:00 AM hàng ngày.');
+          setMessage('🐷 Đã bật Lợn Út Ít gọi học thành công! Bạn sẽ nhận nhắc nhở mỗi sáng!');
         } else {
           alert(data.error || 'Không thể lưu thông tin đăng ký thông báo');
         }
@@ -134,8 +134,8 @@ export default function PushNotificationToggle() {
 
         // Try local notification test first
         try {
-          new Notification('📚 Test Thông Báo LịchHọc.Ai', {
-            body: 'Thông báo thử nghiệm trực tiếp trên máy tính của bạn!',
+          new Notification('🐷 Lợn Út Ít AI Nhắc Học', {
+            body: 'Út Ít đang kiểm tra thử nghiệm thông báo trên máy bạn!',
             icon: '/favicon.ico',
           });
         } catch (localErr) {
@@ -146,7 +146,7 @@ export default function PushNotificationToggle() {
       const res = await fetch('/api/push/test', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setMessage(data.message || '🚀 Đã gửi Push Test thành công!');
+        setMessage(data.message || '🐷 Lợn AI đã gửi Push Test thành công!');
       } else {
         alert(data.error || 'Lỗi khi gửi thông báo test từ máy chủ');
       }
@@ -159,7 +159,7 @@ export default function PushNotificationToggle() {
 
   if (!isSupported) {
     return (
-      <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center space-x-2">
+      <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs flex items-center space-x-2 font-medium">
         <ShieldAlert className="w-4 h-4 shrink-0 text-amber-400" />
         <span>Trình duyệt hiện tại chưa hỗ trợ Web Push Notification. (Nếu dùng iPhone, hãy chọn "Thêm vào Màn hình chính").</span>
       </div>
@@ -167,30 +167,30 @@ export default function PushNotificationToggle() {
   }
 
   return (
-    <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+    <div className="p-5 rounded-3xl bg-[#23121d]/90 border border-pink-900/40 space-y-4 shadow-xl">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start space-x-3">
-          <div className={`p-3 rounded-xl shrink-0 ${isSubscribed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-cyan-500/20 text-cyan-400'}`}>
-            <Bell className="w-5 h-5 animate-pulse" />
+          <div className={`p-3.5 rounded-2xl shrink-0 text-xl ${isSubscribed ? 'bg-pink-500/25 text-pink-300' : 'bg-pink-500/15 text-pink-400'}`}>
+            🐷
           </div>
           <div>
-            <h3 className="text-base font-bold text-white flex items-center space-x-2">
-              <span>Thông Báo Hàng Ngày Trên Trình Duyệt</span>
+            <h3 className="text-base font-extrabold text-white flex items-center space-x-2">
+              <span>Lợn Út Ít Nhắc Học Mỗi Sáng 🌸</span>
               {isSubscribed && (
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30">
-                  Đã Bật
+                <span className="text-[10px] bg-pink-500/25 text-pink-300 font-bold px-2.5 py-0.5 rounded-full border border-pink-500/40">
+                  Đã Bật 🐷
                 </span>
               )}
             </h3>
-            <p className="text-xs text-slate-400 mt-1">
-              Nhận thông báo nổ trực tiếp trên màn hình khóa điện thoại và máy tính lúc <strong>07:00 AM</strong> mỗi sáng.
+            <p className="text-xs text-rose-200/70 mt-1 font-medium">
+              Nhận thông báo nổ trực tiếp trên màn hình điện thoại & máy tính mỗi sáng trước giờ đi học.
             </p>
           </div>
         </div>
       </div>
 
       {message && (
-        <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-xs font-semibold">
+        <div className="p-3 rounded-2xl bg-pink-500/20 border border-pink-500/40 text-pink-200 text-xs font-bold">
           {message}
         </div>
       )}
@@ -199,10 +199,10 @@ export default function PushNotificationToggle() {
         <button
           onClick={handleToggleSubscribe}
           disabled={loading || subscribing}
-          className={`px-5 py-2.5 rounded-xl font-bold text-xs flex items-center space-x-2 transition-all shadow-md ${
+          className={`px-5 py-2.5 rounded-2xl font-extrabold text-xs flex items-center space-x-2 transition-all shadow-md cute-bounce ${
             isSubscribed
-              ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-              : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-cyan-500/20 hover:scale-105'
+              ? 'bg-[#1a0c15] hover:bg-pink-950/80 text-rose-200 border border-pink-500/30'
+              : 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white shadow-pink-500/25'
           } disabled:opacity-50`}
         >
           {subscribing || loading ? (
@@ -212,13 +212,13 @@ export default function PushNotificationToggle() {
             </>
           ) : isSubscribed ? (
             <>
-              <BellOff className="w-4 h-4 text-slate-400" />
+              <BellOff className="w-4 h-4 text-rose-400" />
               <span>Tắt Thông Báo Trên Thiết Bị Này</span>
             </>
           ) : (
             <>
-              <Sparkles className="w-4 h-4 text-cyan-200" />
-              <span>Bật Thông Báo Web Push Ngay</span>
+              <span className="text-sm">🐷</span>
+              <span>Bật Lợn Út Ít Nhắc Học Ngay</span>
             </>
           )}
         </button>
@@ -227,14 +227,14 @@ export default function PushNotificationToggle() {
           <button
             onClick={handleTestPush}
             disabled={testing}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all hover:scale-105 disabled:opacity-50 flex items-center space-x-1.5"
+            className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white text-xs font-extrabold shadow-md shadow-pink-500/25 transition-all cute-bounce disabled:opacity-50 flex items-center space-x-1.5"
           >
             {testing ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Send className="w-3.5 h-3.5" />
             )}
-            <span>{testing ? 'Đang gửi...' : 'Gửi Push Test Ngay'}</span>
+            <span>{testing ? 'Đang gửi...' : 'Gửi Push Test Ngay 🐷'}</span>
           </button>
         )}
       </div>

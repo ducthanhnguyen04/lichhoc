@@ -40,7 +40,6 @@ export default function MySchedulePage() {
     }
   };
 
-
   const handleDeleteAll = async () => {
     if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ thời khóa biểu đã lưu không? Hành động này không thể hoàn tác.')) {
       return;
@@ -86,30 +85,31 @@ export default function MySchedulePage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 py-4">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-pink-900/40 pb-6">
         <div>
-          <div className="inline-flex items-center space-x-2 text-cyan-400 text-xs font-semibold bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20 mb-2">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Lịch Học Đã Lưu</span>
+          <div className="inline-flex items-center space-x-2 text-pink-300 text-xs font-bold bg-pink-500/15 px-3.5 py-1.5 rounded-full border border-pink-500/30 mb-2.5">
+            <span className="text-sm">🐷</span>
+            <span>Thời Khóa Biểu Của Tôi</span>
+            <span className="text-sm">🌸</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
-            Lịch Học Của Tôi
+          <h1 className="text-2xl sm:text-3xl font-black text-white flex items-center space-x-2">
+            <span>Lịch Học Của Tôi</span>
+            <span className="text-pink-400">🐷</span>
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Thời khóa biểu tự động nhắc nhở Web Push 07:00 AM mỗi sáng.
+          <p className="text-xs sm:text-sm text-rose-200/70 mt-1 font-medium">
+            Lợn Út Ít AI 🐷 tự động nhắc nhở lịch học chu đáo mỗi sáng.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {scheduleRow && scheduleRow.schedule_data && scheduleRow.schedule_data.length > 0 && (
             <>
-
               <button
                 onClick={() => setIsSyncModalOpen(true)}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-sm font-bold shadow-lg shadow-emerald-500/20 transition-all hover:scale-105"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white text-xs font-extrabold shadow-lg shadow-pink-500/25 transition-all cute-bounce"
               >
                 <Smartphone className="w-4 h-4" />
-                <span>Đồng Bộ Lịch Điện Thoại</span>
+                <span>Đồng Bộ Lịch Điện Thoại 🐷</span>
               </button>
             </>
           )}
@@ -118,16 +118,16 @@ export default function MySchedulePage() {
             <>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 text-sm font-semibold border border-slate-700 transition-all"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-[#261420] hover:bg-pink-950/70 text-pink-300 text-xs font-bold border border-pink-500/30 transition-all cute-bounce"
               >
                 <Edit3 className="w-4 h-4" />
-                <span>{isEditing ? 'Thoát Chỉnh Sửa' : 'Chỉnh Sửa Lịch'}</span>
+                <span>{isEditing ? 'Thoát Chỉnh Sửa' : 'Chỉnh Sửa Lịch 🌸'}</span>
               </button>
 
               <button
                 onClick={handleDeleteAll}
                 disabled={deleting}
-                className="inline-flex items-center space-x-2 px-3.5 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-sm font-semibold border border-red-500/30 transition-all disabled:opacity-50"
+                className="inline-flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-bold border border-red-500/30 transition-all disabled:opacity-50 cute-bounce"
                 title="Xóa toàn bộ lịch học"
               >
                 <Trash2 className="w-4 h-4" />
@@ -138,10 +138,10 @@ export default function MySchedulePage() {
 
           <Link
             href="/dashboard"
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold shadow-lg shadow-cyan-500/20 transition-all"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 text-white text-xs font-extrabold shadow-lg shadow-pink-500/25 transition-all cute-bounce"
           >
             <Plus className="w-4 h-4" />
-            <span>Tải Ảnh Mới</span>
+            <span>Tải Ảnh Mới 🐷</span>
           </Link>
         </div>
       </div>
@@ -151,29 +151,29 @@ export default function MySchedulePage() {
 
       {loading ? (
         <div className="py-16 text-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin text-cyan-400 mx-auto" />
-          <p className="text-slate-400 text-sm">Đang tải lịch học của bạn...</p>
+          <Loader2 className="w-8 h-8 animate-spin text-pink-400 mx-auto" />
+          <p className="text-rose-200/70 text-sm font-medium">Lợn Út Ít đang tải lịch học của bạn... 🐷</p>
         </div>
       ) : errorMsg ? (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-center space-x-2">
+        <div className="p-4 bg-red-500/15 border border-red-500/30 rounded-2xl text-red-300 text-xs flex items-center space-x-2 font-medium">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       ) : !scheduleRow || !scheduleRow.schedule_data || scheduleRow.schedule_data.length === 0 ? (
-        <div className="glass-card p-12 text-center space-y-4 max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
-            <Calendar className="w-8 h-8" />
+        <div className="glass-card p-12 text-center space-y-4 max-w-lg mx-auto rounded-3xl">
+          <div className="w-20 h-20 rounded-3xl bg-pink-500/20 text-pink-400 flex items-center justify-center mx-auto text-4xl shadow-inner">
+            🐷
           </div>
-          <h3 className="text-xl font-bold text-white">Bạn chưa có lịch học nào</h3>
-          <p className="text-sm text-slate-400">
-            Hãy tải ảnh thời khóa biểu lên để AI tự động nhận diện và gửi email nhắc nhở mỗi ngày!
+          <h3 className="text-xl font-extrabold text-white">Bạn chưa có lịch học nào cả 🌸</h3>
+          <p className="text-xs text-rose-200/70 leading-relaxed font-medium">
+            Hãy tải ảnh thời khóa biểu lên để chú Lợn AI Út Ít tự động bóc tách và gửi nhắc nhở học tập mỗi sáng nhé!
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all hover:scale-105"
+            className="inline-flex items-center space-x-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-extrabold text-xs shadow-lg shadow-pink-500/30 transition-all cute-bounce"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Tải Ảnh Ngay Bằng AI</span>
+            <span>Tải Ảnh Ngay Bằng AI 🐷</span>
           </Link>
         </div>
       ) : isEditing ? (
@@ -196,21 +196,21 @@ export default function MySchedulePage() {
               return (
                 <div
                   key={dayNum}
-                  className={`glass-card p-5 space-y-4 transition-all relative ${
+                  className={`glass-card p-5 space-y-4 transition-all relative rounded-3xl ${
                     isToday
-                      ? 'border-cyan-500 ring-1 ring-cyan-500/50 bg-slate-800/90'
-                      : 'hover:border-slate-600'
+                      ? 'border-pink-500/80 ring-2 ring-pink-500/40 bg-[#2b1523]/95 shadow-lg shadow-pink-950/50'
+                      : 'hover:border-pink-500/40'
                   }`}
                 >
                   {/* Day Header */}
-                  <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-                    <h3 className={`text-base font-bold flex items-center space-x-2 ${isToday ? 'text-cyan-400' : 'text-white'}`}>
-                      <Calendar className="w-4 h-4" />
+                  <div className="flex items-center justify-between border-b border-pink-900/40 pb-3">
+                    <h3 className={`text-base font-extrabold flex items-center space-x-2 ${isToday ? 'text-pink-300' : 'text-white'}`}>
+                      <span>🌸</span>
                       <span>{DAY_NAMES[dayNum]}</span>
                     </h3>
                     {isToday && (
-                      <span className="text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-                        Hôm nay
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full bg-pink-500/25 text-pink-300 border border-pink-500/40">
+                        Hôm nay 🐷
                       </span>
                     )}
                   </div>
@@ -218,23 +218,23 @@ export default function MySchedulePage() {
                   {/* Class List */}
                   <div className="space-y-3">
                     {dayItems.length === 0 ? (
-                      <p className="text-xs text-slate-500 italic py-2">Không có lịch học</p>
+                      <p className="text-xs text-rose-300/40 italic py-2">Không có lịch học 🌸</p>
                     ) : (
                       dayItems.map((item, idx) => (
                         <div
                           key={idx}
-                          className="p-3 rounded-xl bg-slate-900/80 border border-slate-700/60 space-y-2 hover:border-cyan-500/40 transition-all"
+                          className="p-3.5 rounded-2xl bg-[#1a0c15]/90 border border-pink-900/40 space-y-2 hover:border-pink-500/40 transition-all shadow-sm"
                         >
-                          <div className="font-semibold text-sm text-slate-100 line-clamp-2">
+                          <div className="font-extrabold text-xs text-rose-100 line-clamp-2">
                             {item.subject_name}
                           </div>
-                          <div className="flex items-center justify-between text-xs text-slate-400 pt-1 border-t border-slate-800">
-                            <div className="flex items-center space-x-1 text-cyan-400 font-mono">
+                          <div className="flex items-center justify-between text-xs text-rose-200/70 pt-1.5 border-t border-pink-950/60">
+                            <div className="flex items-center space-x-1 text-pink-300 font-mono font-bold">
                               <Clock className="w-3.5 h-3.5" />
                               <span>{item.start_time} - {item.end_time}</span>
                             </div>
-                            <div className="flex items-center space-x-1 text-slate-300 font-medium">
-                              <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                            <div className="flex items-center space-x-1 text-rose-200 font-semibold">
+                              <MapPin className="w-3.5 h-3.5 text-pink-400" />
                               <span>{item.room || 'TBA'}</span>
                             </div>
                           </div>

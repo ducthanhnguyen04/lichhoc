@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { UploadCloud, Image as ImageIcon, Loader2, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
+import { UploadCloud, Image as ImageIcon, Sparkles, AlertCircle, CheckCircle } from 'lucide-react';
 import { ScheduleItem } from '@/types/schedule';
 
 interface UploadDropzoneProps {
@@ -37,7 +37,7 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
 
     setErrorMsg(null);
     setLoading(true);
-    setStatusText('Đang tải ảnh lên bộ nhớ an toàn (Supabase Storage)...');
+    setStatusText('Đang tải ảnh lên bộ nhớ an toàn (Supabase Storage)... 🐷');
 
     // Preview image
     const localPreview = URL.createObjectURL(file);
@@ -71,7 +71,7 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
         .from('schedule-images')
         .getPublicUrl(uploadData.path);
 
-      setStatusText('Đang phân tích thời khóa biểu bằng AI Vision (Gemini 1.5 Flash)...');
+      setStatusText('Chú Lợn Út Ít AI đang soi từng dòng thời khóa biểu... 🐷🌸');
 
       // Call API /api/extract-schedule
       const response = await fetch('/api/extract-schedule', {
@@ -87,10 +87,10 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
       const resData = await response.json();
 
       if (!response.ok || !resData.success) {
-        throw new Error(resData.error || 'AI gặp sự cố khi đọc thời khóa biểu');
+        throw new Error(resData.error || 'Lợn AI gặp sự cố khi đọc thời khóa biểu');
       }
 
-      setStatusText('Bóc tách thành công!');
+      setStatusText('Út Ít AI đã bóc tách xong! 🐷✨');
       onExtracted(resData.schedule_data, publicUrl);
     } catch (err: any) {
       console.error(err);
@@ -131,10 +131,10 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
             fileInputRef.current?.click();
           }
         }}
-        className={`glass-card p-8 text-center cursor-pointer transition-all border-2 border-dashed relative overflow-hidden group ${
+        className={`glass-card p-8 text-center cursor-pointer transition-all border-2 border-dashed relative overflow-hidden group rounded-3xl ${
           isDragging
-            ? 'border-cyan-400 bg-cyan-500/10 scale-[1.01]'
-            : 'border-slate-700/80 hover:border-cyan-500/60 hover:bg-slate-800/90'
+            ? 'border-pink-400 bg-pink-500/15 scale-[1.01]'
+            : 'border-pink-500/30 hover:border-pink-400/80 hover:bg-pink-950/40'
         } ${loading ? 'pointer-events-none opacity-90' : ''}`}
       >
         <input
@@ -148,41 +148,41 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
         {loading ? (
           <div className="py-8 flex flex-col items-center justify-center space-y-4">
             <div className="relative">
-              <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center animate-pulse">
-                <Sparkles className="w-8 h-8 text-cyan-400 animate-spin" />
+              <div className="w-20 h-20 rounded-3xl bg-pink-500/20 flex items-center justify-center animate-bounce text-3xl">
+                🐷
               </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-base font-semibold text-white">{statusText}</p>
-              <p className="text-xs text-slate-400">Trí tuệ nhân tạo đang tự động phân tích thứ, giờ học & phòng học...</p>
+            <div className="space-y-1.5">
+              <p className="text-base font-bold text-white">{statusText}</p>
+              <p className="text-xs text-rose-200/70 font-medium">Lợn Út Ít đang phân tích Thứ, Ca học & Phòng học cho bạn...</p>
             </div>
           </div>
         ) : previewUrl ? (
           <div className="flex flex-col items-center space-y-4">
-            <div className="relative max-h-60 overflow-hidden rounded-xl border border-slate-700">
+            <div className="relative max-h-60 overflow-hidden rounded-2xl border border-pink-500/30 shadow-lg">
               <img src={previewUrl} alt="Thời khóa biểu preview" className="object-contain max-h-60 w-auto" />
             </div>
-            <div className="flex items-center space-x-2 text-xs text-cyan-400 font-semibold bg-cyan-500/10 px-3 py-1.5 rounded-full border border-cyan-500/20">
-              <CheckCircle className="w-4 h-4" />
+            <div className="flex items-center space-x-2 text-xs text-pink-300 font-extrabold bg-pink-500/20 px-4 py-2 rounded-full border border-pink-500/40 cute-bounce">
+              <span className="text-sm">🐷</span>
               <span>Bấm vào đây để chọn hoặc tải lại ảnh khác</span>
             </div>
           </div>
         ) : (
           <div className="py-6 flex flex-col items-center justify-center space-y-4">
-            <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center group-hover:scale-110 group-hover:border-cyan-500/50 transition-all shadow-lg">
-              <UploadCloud className="w-8 h-8 text-cyan-400" />
+            <div className="w-16 h-16 rounded-3xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center group-hover:scale-110 group-hover:border-pink-400 transition-all shadow-lg text-3xl">
+              🐷
             </div>
             <div>
               <p className="text-base font-bold text-white mb-1">
-                Kéo thả ảnh thời khóa biểu vào đây, hoặc <span className="text-cyan-400 underline">bấm để tải lên</span>
+                Kéo thả ảnh thời khóa biểu vào đây, hoặc <span className="text-pink-400 underline">bấm để tải lên</span>
               </p>
-              <p className="text-xs text-slate-400">
-                Chỉ chấp nhận ảnh JPG, PNG (Tối đa 10MB)
+              <p className="text-xs text-rose-200/70 font-medium">
+                Hỗ trợ ảnh JPG, PNG (Tối đa 10MB)
               </p>
             </div>
-            <div className="inline-flex items-center space-x-2 text-[11px] text-slate-400 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/60">
-              <ImageIcon className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Hỗ trợ Tiếng Việt, Tiếng Anh & Trung Phồn Thể</span>
+            <div className="inline-flex items-center space-x-2 text-[11px] text-pink-300/80 bg-pink-950/50 px-3.5 py-1.5 rounded-full border border-pink-500/20 font-semibold">
+              <span className="text-xs">🌸</span>
+              <span>Lợn Út Ít hỗ trợ Tiếng Việt, Tiếng Anh & Trung Phồn Thể</span>
             </div>
           </div>
         )}
@@ -190,7 +190,7 @@ export default function UploadDropzone({ onExtracted }: UploadDropzoneProps) {
 
       {/* Error Alert */}
       {errorMsg && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-start space-x-2.5">
+        <div className="p-4 bg-red-500/15 border border-red-500/30 rounded-2xl text-red-300 text-xs flex items-start space-x-2.5 font-medium">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>
