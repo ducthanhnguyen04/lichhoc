@@ -24,6 +24,7 @@ export interface SendPushOptions {
   body: string;
   url?: string;
   icon?: string;
+  sound?: string;
 }
 
 export async function sendWebPushNotification({
@@ -32,6 +33,7 @@ export async function sendWebPushNotification({
   body,
   url = '/my-schedule',
   icon = '/favicon.ico',
+  sound = '/notification.mp3',
 }: SendPushOptions) {
   if (!vapidPublicKey || !vapidPrivateKey) {
     throw new Error('VAPID keys chưa được cấu hình trong môi trường server.');
@@ -42,6 +44,7 @@ export async function sendWebPushNotification({
     body,
     url,
     icon,
+    sound,
   });
 
   return await webpush.sendNotification(

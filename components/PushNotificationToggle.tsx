@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, BellOff, Loader2, Send, ShieldAlert, Sparkles } from 'lucide-react';
+import { Bell, BellOff, Loader2, Send, ShieldAlert, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { playNotificationChime, isSoundEnabled, setSoundEnabled } from '@/lib/sound';
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -21,9 +22,12 @@ export default function PushNotificationToggle() {
   const [subscribing, setSubscribing] = useState(false);
   const [testing, setTesting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [soundOn, setSoundOn] = useState(true);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    setSoundOn(isSoundEnabled());
 
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
       setIsSupported(false);
@@ -47,6 +51,23 @@ export default function PushNotificationToggle() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggleSound = () => {
+    const nextState = !soundOn;
+    setSoundOn(nextState);
+    setSoundEnabled(nextState);
+    if (nextState) {
+      playNotificationChime();
+      setMessage('🔊 Đã bật âm thanh thông báo');
+    } else {
+      setMessage('🔇 Đã tắt âm thanh thông báo');
+    }
+  };
+
+  const handleTestSound = () => {
+    playNotificationChime();
+    setMessage('🔊 Đang phát chuông thử nghiệm thông báo');
   };
 
   const handleToggleSubscribe = async () => {
@@ -105,6 +126,7 @@ export default function PushNotificationToggle() {
         const data = await res.json();
         if (res.ok && data.success) {
           setIsSubscribed(true);
+          playNotificationChime();
           setMessage('🎉 Đã bật thông báo Web Push thành công! Bạn sẽ nhận nhắc nhở mỗi sáng.');
         } else {
           alert(data.error || 'Không thể lưu thông tin đăng ký thông báo');
@@ -121,6 +143,10 @@ export default function PushNotificationToggle() {
   const handleTestPush = async () => {
     setTesting(true);
     setMessage(null);
+
+    // Play local audio chime immediately on test push
+    playNotificationChime();
+
     try {
       if (typeof window !== 'undefined' && 'Notification' in window) {
         if (Notification.permission !== 'granted') {
@@ -183,15 +209,15 @@ export default function PushNotificationToggle() {
               )}
             </h3>
             <p className="text-xs text-sky-200/70 mt-1 font-normal">
-              Nhận thông báo nổ trực tiếp trên màn hình điện thoại và máy tính mỗi sáng trước giờ đi học.
+              Nhận thông báo nổ kèm âm thanh trực tiếp trên màn hình điện thoại và máy tính mỗi sáng trước giờ đi học.
             </p>
           </div>
         </div>
       </div>
 
       {message && (
-        <div className="p-3 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-200 text-xs font-semibold">
-          {message}
+        <div className="p-3 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-200 text-xs font-semibold flex items-center justify-between">
+          <span>{message}</span>
         </div>
       )}
 
@@ -223,6 +249,40 @@ export default function PushNotificationToggle() {
           )}
         </button>
 
+        {/* Audio Test & Toggle Buttons */}
+        <button
+          onClick={handleTestSound}
+          type="button"
+          className="px-4 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-200 text-xs font-semibold border border-sky-500/30 transition-all sky-bounce flex items-center space-x-1.5"
+          title="Bấm để nghe thử chuông thông báo"
+        >
+          <Volume2 className="w-3.5 h-3.5 text-sky-400" />
+          <span>Thử Âm Thanh</span>
+        </button>
+
+        <button
+          onClick={handleToggleSound}
+          type="button"
+          className={`px-3.5 py-2.5 rounded-xl text-xs font-semibold border transition-all flex items-center space-x-1.5 ${
+            soundOn
+              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
+              : 'bg-rose-500/15 text-rose-300 border-rose-500/30 hover:bg-rose-500/25'
+          }`}
+          title={soundOn ? 'Âm thanh đang Bật' : 'Âm thanh đang Tắt'}
+        >
+          {soundOn ? (
+            <>
+              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Âm Thanh: Bật</span>
+            </>
+          ) : (
+            <>
+              <VolumeX className="w-3.5 h-3.5 text-rose-400" />
+              <span>Âm Thanh: Tắt</span>
+            </>
+          )}
+        </button>
+
         {isSubscribed && (
           <button
             onClick={handleTestPush}
@@ -241,3 +301,4 @@ export default function PushNotificationToggle() {
     </div>
   );
 }
+

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import NotificationSoundListener from '@/components/NotificationSoundListener';
 import Navbar from '@/components/Navbar';
 import './globals.css';
 
@@ -38,6 +39,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="bg-[#081524] text-sky-100 min-h-screen flex flex-col font-sans">
+        <NotificationSoundListener />
         <Navbar />
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {children}
