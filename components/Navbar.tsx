@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { Calendar, LogOut, User, Sparkles, BookOpen, Layers } from 'lucide-react';
+import { Calendar, LogOut, User, Sparkles, BookOpen, Layers, Mic } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import VoiceAssistantModal from './VoiceAssistantModal';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,6 +14,7 @@ export default function Navbar() {
   const supabase = createClient();
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -52,6 +54,14 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center space-x-2">
             {user ? (
               <>
+                <button
+                  onClick={() => setIsVoiceModalOpen(true)}
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2 text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 shadow-sm sky-bounce"
+                >
+                  <Mic className="w-4 h-4 text-sky-400 animate-pulse" />
+                  <span>Hỏi AI Voice</span>
+                </button>
+
                 <Link
                   href="/dashboard"
                   className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2 sky-bounce ${
@@ -125,6 +135,16 @@ export default function Navbar() {
               <div className="px-3 py-2 text-xs text-sky-300 border-b border-sky-900/40 mb-2 truncate">
                 Đăng nhập: <span className="text-white font-medium">{user.email}</span>
               </div>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setIsVoiceModalOpen(true);
+                }}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm font-semibold text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 flex items-center space-x-2"
+              >
+                <Mic className="w-4 h-4 text-sky-400 animate-pulse" />
+                <span>Hỏi Lịch Học (AI Voice)</span>
+              </button>
               <Link
                 href="/dashboard"
                 onClick={() => setIsMenuOpen(false)}
@@ -161,6 +181,12 @@ export default function Navbar() {
           )}
         </div>
       )}
+
+      {/* Voice Assistant AI Modal */}
+      <VoiceAssistantModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setIsVoiceModalOpen(false)}
+      />
     </header>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import NotificationSoundListener from '@/components/NotificationSoundListener';
 import Navbar from '@/components/Navbar';
+import VoiceAssistantFab from '@/components/VoiceAssistantFab';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function RootLayout({
         <footer className="border-t border-sky-900/40 bg-[#06111e]/80 py-6 text-center text-xs text-sky-300/60">
           <p>© {new Date().getFullYear()} Tah - Hệ Thống Nhắc Lịch Học Tự Động Bằng AI Vision.</p>
         </footer>
+        <VoiceAssistantFab />
       </body>
     </html>
   );

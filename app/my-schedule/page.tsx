@@ -7,7 +7,8 @@ import { ScheduleRow, ScheduleItem, DAY_NAMES } from '@/types/schedule';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import CalendarSyncModal from '@/components/CalendarSyncModal';
 import PushNotificationToggle from '@/components/PushNotificationToggle';
-import { Calendar, Clock, MapPin, Edit3, Plus, Sparkles, AlertCircle, Loader2, BookOpen, Smartphone, Trash2 } from 'lucide-react';
+import VoiceAssistantModal from '@/components/VoiceAssistantModal';
+import { Calendar, Clock, MapPin, Edit3, Plus, Sparkles, AlertCircle, Loader2, BookOpen, Smartphone, Trash2, Mic } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MySchedulePage() {
@@ -17,11 +18,18 @@ export default function MySchedulePage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [initialVoiceQuery, setInitialVoiceQuery] = useState<string | undefined>(undefined);
 
   // Get current day of week (JS: 0=Sun, 1=Mon, ..., 6=Sat)
   // Our system: 2=Mon, 3=Tue, ..., 7=Sat, 8=Sun
   const todayJs = new Date().getDay();
   const currentDayOfWeek = todayJs === 0 ? 8 : todayJs + 1;
+
+  const handleOpenVoice = (query?: string) => {
+    setInitialVoiceQuery(query);
+    setIsVoiceModalOpen(true);
+  };
 
   const fetchSchedule = async () => {
     setLoading(true);
@@ -100,14 +108,22 @@ export default function MySchedulePage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => handleOpenVoice()}
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-extrabold shadow-lg shadow-sky-500/25 transition-all sky-bounce ring-2 ring-sky-400/30"
+          >
+            <Mic className="w-4 h-4 text-white animate-pulse" />
+            <span>Hỏi Lịch Học (AI Voice)</span>
+          </button>
+
           {scheduleRow && scheduleRow.schedule_data && scheduleRow.schedule_data.length > 0 && (
             <>
               <button
                 onClick={() => setIsSyncModalOpen(true)}
-                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-sky-500/20 transition-all sky-bounce"
+                className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-[#0f2136] hover:bg-sky-950/70 text-sky-200 text-xs font-semibold border border-sky-500/20 transition-all sky-bounce"
               >
-                <Smartphone className="w-4 h-4" />
-                <span>Đồng Bộ Lịch Điện Thoại</span>
+                <Smartphone className="w-4 h-4 text-sky-400" />
+                <span>Đồng Bộ Điện Thoại</span>
               </button>
             </>
           )}
@@ -136,11 +152,54 @@ export default function MySchedulePage() {
 
           <Link
             href="/dashboard"
-            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-sky-500/20 transition-all sky-bounce"
+            className="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-500/30 text-xs font-semibold transition-all sky-bounce"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-sky-400" />
             <span>Tải Ảnh Mới</span>
           </Link>
+        </div>
+      </div>
+
+      {/* AI Voice Assistant Banner Card */}
+      <div className="glass-card p-5 rounded-2xl bg-gradient-to-r from-[#0d2238] via-[#091b2e] to-[#0d2238] border border-sky-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl">
+        <div className="flex items-center space-x-3.5">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-lg shadow-sky-500/30 shrink-0">
+            <Mic className="w-6 h-6 text-white animate-pulse" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <h3 className="text-sm sm:text-base font-extrabold text-white">
+                Hỏi Nhanh Lịch Học Bằng Giọng Nói AI
+              </h3>
+              <span className="text-[10px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-bold">
+                MỚI
+              </span>
+            </div>
+            <p className="text-xs text-sky-200/70">
+              Bấm nút Micro để hỏi: <span className="text-sky-300 font-semibold italic">"Hôm nay, ngày mai, ngày kia có lịch gì môn gì?"</span>
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+          <button
+            onClick={() => handleOpenVoice('Hôm nay tôi có lịch gì môn gì?')}
+            className="text-xs font-semibold px-3 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 transition-all sky-bounce"
+          >
+            🎙️ Hôm nay
+          </button>
+          <button
+            onClick={() => handleOpenVoice('Ngày mai tôi học môn gì?')}
+            className="text-xs font-semibold px-3 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 transition-all sky-bounce"
+          >
+            🎙️ Ngày mai
+          </button>
+          <button
+            onClick={() => handleOpenVoice('Ngày kia có lịch học gì không?')}
+            className="text-xs font-semibold px-3 py-2 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 transition-all sky-bounce"
+          >
+            🎙️ Ngày kia
+          </button>
         </div>
       </div>
 
@@ -256,6 +315,13 @@ export default function MySchedulePage() {
           onClose={() => setIsSyncModalOpen(false)}
         />
       )}
+
+      {/* Voice Assistant Modal */}
+      <VoiceAssistantModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setIsVoiceModalOpen(false)}
+        initialQuery={initialVoiceQuery}
+      />
     </div>
   );
 }
